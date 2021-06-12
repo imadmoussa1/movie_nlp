@@ -13,7 +13,7 @@ movies_df = pd.read_csv("movies_metadata.csv", converters={'genres': eval}, low_
 # Choosing the fields will be using in this project (genres, overview, title)
 movies_df = movies_df[['genres', 'overview', 'title']]
 # Getting the first genre from the list of genres in the data set
-movies_df["genres"] = movies_df["genres"].apply(lambda x: str(x[0]['name']) if len(x)>0 else np.nan)
+movies_df["genres"] = movies_df["genres"].apply(lambda x: str(x[0]['name']) if len(x) > 0 else np.nan)
 # Drop the row with Empty genres ( not useful in training)
 movies_df = movies_df.dropna()
 # Get the Unique values of genres to be our genres Taxonomy

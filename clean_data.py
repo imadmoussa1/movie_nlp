@@ -14,6 +14,7 @@ import numpy as np
 # Load spacy eng core
 nlp = spacy.load("en_core_web_sm")
 
+
 def cleaner(overview):
   # Clean parenthese from text
   parenthese_pat = r"\([^)]+\)"
