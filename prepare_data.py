@@ -23,6 +23,8 @@ print(genres_label)
 print(movies_df)
 print(movies_df['genres'].value_counts())
 
+# Adding title of the movie to the description
+movies_df['overview'] = movies_df['title'].astype(str).str.cat(movies_df['overview'], sep=' ')
 # Clean the data before training
 movies_df['overview'] = movies_df['overview'].apply(cleaner)
 
