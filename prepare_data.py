@@ -38,5 +38,6 @@ for genre in genres_label:
   df_train["overview"].to_csv(file_name, header=None, index=None, sep='\t', mode='a')
 
 # This simple csv format to be used in TFX example
+movies_df.genres.replace(genres_label, [0, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], inplace=True)
 movies_df.set_index('genres', inplace=True)
-movies_df.to_csv("data/movies_genre.csv", ",")
+movies_df.to_csv("tfx/data/movies_genre.csv", ",")

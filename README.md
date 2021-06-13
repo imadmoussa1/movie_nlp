@@ -14,7 +14,9 @@ This script is used to:
 2) select the fields used we need for training (genres, overview, title)
 3) Get the first genre of the genre list to be used as label
 4) Generate the genre taxonomy (list of labels)
+5) before training we generate a vocab, and we do a tokenization based on the vocab (input for the training model)
 The data are saved as text file in the `data` folder each represent the descriptions of the genre
+
 #### genre Taxonomy
 0) Animation
 1) Adventure
@@ -85,3 +87,13 @@ python3 main.py --title "Sicario" --description "During a dangerous mission to s
 docker build --pull --rm -f "Dockerfile" -t movienlp:latest "."
 docker run -e "title=Sicario" -e "description=During a dangerous mission to stop a drug cartel operating between the US and Mexico, Kate Macer, an FBI agent, is exposed to some harsh realities."
 ```
+
+## TFX
+I added [TFX](https://www.tensorflow.org/tfx) to the project a new framework used for ML Workflow with the automated test, It's using the same procedure already used in manual Training model and Same prepared data. ( it's based on TFX imdb review workflow)
+All the details of this project are under tfx, for Faster debugging we can run it using the the `tfx.ipynb` notebook
+tfx library installation:
+```
+pip3 install -r tfx/requirements.txt
+```
+### Model
+tfx also generate type of model generated before that can be used in the main.py to predict the movie genre.
