@@ -64,12 +64,15 @@ pip3 install -r requirements.txt
 python3 -m spacy download en_core_web_sm
 ```
 ### Prepare data
-Prepare the data we will using for training by running ```python3 prepare_data.py```
-Data will be saved in Data directory
+Prepare the data for training by running
+```
+python3 prepare_data.py
+```
+Data will be saved in `data` directory
 ### Training
 Run the `movie_classification.ipynb`
 1) on colab you need to upload the data text files from data directory. and download the model
-2) locally you need to update the data path in the cell
+2) locally you need to update the data path `parent_dir = 'data/'` in the cell
 We already have a trained model in model directory
 
 ### run the prediction (directly)

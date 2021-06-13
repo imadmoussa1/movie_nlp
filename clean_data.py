@@ -34,10 +34,10 @@ def cleaner(overview):
 
   tok = None
 
-  stripped = stripped.replace('"', '')
-  stripped = stripped.replace('.', '')
-  stripped = stripped.replace('/', '')
-  stripped = stripped.replace('-', '')
+  stripped = stripped.replace('"', ' ')
+  stripped = stripped.replace('.', ' ')
+  stripped = stripped.replace('/', ' ')
+  stripped = stripped.replace('-', ' ')
   tokens = nlp(stripped)
   # Use spacy model to remove the Stop word and punctuation from text
   results = [token for i, token in enumerate(tokens) if not token.is_stop and not token.is_punct]
