@@ -96,4 +96,4 @@ tfx library installation:
 pip3 install -r tfx/requirements.txt
 ```
 ### Model
-tfx also generate type of model generated before that can be used in the main.py to predict the movie genre.
+TFX generate tf model (Same model type used before) that can be used in the main.py to predict the movie genre.
