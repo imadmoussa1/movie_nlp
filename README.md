@@ -1,20 +1,20 @@
 # Movie Genre Classification
 ## Project details
 ### Data Set
-For this project we will be using the data set movies_metadata from [The Movies Dataset](https://www.kaggle.com/rounakbanik/the-movies-dataset/version/7#movies_metadata.csv) an open source data on Kaggle.
+For this project we are using the movies_metadata data set from [The Movies Dataset](https://www.kaggle.com/rounakbanik/the-movies-dataset/version/7#movies_metadata.csv) an open source Kaggle data.
 
-we will be using the columns: overview, title and genres
+the columns used in this project: overview, title and genres
 ### Frameworks
-We will be using `Python 3.9` with specific library predefined in the requirements.txt
-The Main Training library for training will be Tensorflow.
+We are using `Python 3.9` with specific library predefined in the requirements.txt, with Tensorflow as DeepLearning library.
+
 ### Data preparing for Training
-we will prepare the training data by running the `prepare_data.py` script.
-This script is used to:
-1) read the `movies_metadata.csv`
-2) select the fields used we need for training (genres, overview, title)
+running the `prepare_data.py` script, to prepare the training data.
+This script will:
+1) Read the `movies_metadata.csv`
+2) Select the fields used we need for training (genres, overview, title)
 3) Get the first genre of the genre list to be used as label
 4) Generate the genre taxonomy (list of labels)
-5) before training we generate a vocab, and we do a tokenization based on the vocab (input for the training model)
+5) Before training we generate a vocab, and we do a tokenization based on the vocab (input for the training model)
 The data are saved as text file in the `data` folder each represent the descriptions of the genre
 
 #### genre Taxonomy
@@ -44,11 +44,11 @@ We are using spacy and regex to clean the text from repeated character, punctuat
 This process will used when preparing the training data set and when predicting the genre
 
 ### Model
-We are using Tensorflow for library for this training, we will build this model based on 2 main layer:
-1) The embedding layer, to generate a vocab (The data encoding are based on vocabs vectors )
+Our model based on 4 main layers:
+1) The embedding layer, to analyze the vocab (The data encoding are based on vocabs vectors )
 2) LSTM layer as bidirectional (Reading the text in both direction)
 3) Dense layer for the prediction
-4) Also we added the preprocess layer to make sure the data is cleaned
+4) The preprocess layer to make sure the data is cleaned
 
 The important part in the workflow is to save the best models and loaded in the application.
 
@@ -56,6 +56,7 @@ The important part in the workflow is to save the best models and loaded in the 
 We did the training using the google colab service,
 we open the Training notebook in colab (movie_classification.ipynb) after that we need to upload the text file from the data folder. finally we can the training.
 we have cell to model the best model that we added to project, and we will be using it for prediction ( `model` directory in the project)
+
 ## Setup
 
 ### Dataset
@@ -102,7 +103,7 @@ python3 movies_pipeline_native_keras.py
 ```
 ### Model
 TFX generate tf model (Same model type used before) that can be used in the main.py to predict the movie genre.
-we can copy the model and test it by [Running the prediction](#run-the-prediction-(directly))
+we can copy the model and test it by [Running the prediction](#run-the-prediction-directly)
 ```
 cp serving_model/movies_genre/1623653506 ../model
 ```
