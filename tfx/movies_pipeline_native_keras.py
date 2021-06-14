@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import os
 from typing import List, Text
-
+import absl
 import tensorflow_model_analysis as tfma
 from tfx.components import CsvExampleGen
 from tfx.components import Evaluator
@@ -28,17 +28,19 @@ from tfx.types import Channel
 
 from tfx.types.standard_artifacts import Model
 from tfx.types.standard_artifacts import ModelBlessing
+from tfx.orchestration.beam.beam_dag_runner import BeamDagRunner
 
 _pipeline_name = 'movies_genre'
 
 _project_root = os.path.join("data/")
+base_dir = os.getcwd()
 _data_root = os.path.join(_project_root)
 # Python module file to inject customized logic into the TFX components. The
 # Transform and Trainer both require user-defined functions to run successfully.
-_module_file = os.path.join(_project_root, 'movies_utils_native_keras.py')
+_module_file = os.path.join(base_dir, 'movies_utils_native_keras.py')
 # Path which can be listened to by the model server.  Pusher will output the
 # trained model here.
-_serving_model_dir = os.path.join(_project_root, 'serving_model', _pipeline_name)
+_serving_model_dir = os.path.join(base_dir, 'serving_model', _pipeline_name)
 
 # Directory and data locations. This example assumes all of the
 # example code and metadata library is relative to $HOME, but you can store
@@ -48,7 +50,15 @@ _pipeline_root = os.path.join(_tfx_root, 'pipelines', _pipeline_name)
 # Sqlite ML-metadata db path.
 _metadata_path = os.path.join(_tfx_root, 'metadata', _pipeline_name, 'metadata.db')
 
+_beam_pipeline_args = [
+    '--direct_running_mode=multi_processing',
+    # 0 means auto-detect based on on the number of CPUs available
+    # during execution time.
+    '--direct_num_workers=0',
+]
+
 context = InteractiveContext()
+
 
 def _create_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text,
                      module_file: Text, serving_model_dir: Text,
@@ -63,33 +73,25 @@ def _create_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text,
       ]))
 
   # Brings data in to the pipline
-  base_dir = os.getcwd()
   data_dir = os.path.join(base_dir, "data")
 
-  print(data_dir)
   example_gen = CsvExampleGen(input_base=data_dir, output_config=output)
-  context.run(example_gen)
-  artifact = example_gen.outputs['examples'].get()[0]
-  print(artifact.split_names, artifact.uri)
-
 
   # Computes statistics over data for visualization and example validation.
   statistics_gen = StatisticsGen(examples=example_gen.outputs['examples'])
-  context.run(statistics_gen)
-  context.show(statistics_gen.outputs['statistics'])
 
   # Generates schema based on statistics files.
   schema_gen = SchemaGen(statistics=statistics_gen.outputs['statistics'], infer_feature_shape=True)
-  context.run(schema_gen)
+
   # Performs anomaly detection based on statistics and data schema.
   example_validator = ExampleValidator(statistics=statistics_gen.outputs['statistics'], schema=schema_gen.outputs['schema'])
-  context.run(example_validator)
+
   # Performs transformations and feature engineering in training and serving.
   transform = Transform(
       examples=example_gen.outputs['examples'],
       schema=schema_gen.outputs['schema'],
       module_file=module_file)
-  context.run(transform)
+
   # Uses user-provided Python function that trains a model.
   trainer = Trainer(
       module_file=module_file,
@@ -134,17 +136,15 @@ def _create_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text,
       model=trainer.outputs['model'],
       baseline_model=model_resolver.outputs['model'],
       eval_config=eval_config)
-  context.run(evaluator)
+
   # Checks whether the model passed the validation steps and pushes the model
   # to a file destination if check passed.
   pusher = Pusher(
       model=trainer.outputs['model'],
-      model_blessing=evaluator.outputs['blessing'],
+      # model_blessing=evaluator.outputs['blessing'],
       push_destination=pusher_pb2.PushDestination(
           filesystem=pusher_pb2.PushDestination.Filesystem(
               base_directory=serving_model_dir)))
-  context.run(pusher)
-  print(pusher.outputs)
 
   components = [
       example_gen,
@@ -153,8 +153,8 @@ def _create_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text,
       example_validator,
       transform,
       trainer,
-      model_resolver,
-      evaluator,
+      # model_resolver,
+      # evaluator,
       pusher,
   ]
 
